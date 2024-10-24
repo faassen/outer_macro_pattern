@@ -2,6 +2,7 @@ use proc_macro::TokenStream;
 use syn::parse_macro_input;
 use syn::spanned::Spanned;
 
+/// Mark a module with #[outer] to find all structs and functions marked with #[inner]
 #[proc_macro_attribute]
 pub fn outer(
     _attr: proc_macro::TokenStream,
@@ -10,6 +11,8 @@ pub fn outer(
     let item_mod = parse_macro_input!(item as syn::ItemMod);
     let mut structs = Vec::new();
     let mut functions = Vec::new();
+    println!("{:?}", &item_mod.content);
+
     if let Some((_, items)) = &item_mod.content {
         for item in items {
             match item {
@@ -58,6 +61,7 @@ fn has_inner_attribute(attributes: &[syn::Attribute]) -> bool {
     false
 }
 
+/// Mark a struct or function with #[inner] to be found by the #[outer] macro
 #[proc_macro_attribute]
 pub fn inner(
     _attr: proc_macro::TokenStream,
